@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Shapes;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using DiscordRPC;
@@ -44,7 +45,7 @@ namespace DiscordRpcApp
                 }
                 catch
                 {
-                    // Ignore load errors if file is corrupt
+                    // Ignore corrupted config files
                 }
             }
         }
@@ -76,12 +77,10 @@ namespace DiscordRpcApp
 
             if (string.IsNullOrEmpty(clientId))
             {
-                LblStatus.Text = "Error: Client ID is required!";
-                LblStatus.Foreground = Brushes.Red;
+                UpdateStatusUI("Error: Client ID required", "#F23F43");
                 return;
             }
 
-            // Save user inputs to config file on update
             SaveSettings();
 
             if (client == null || client.ApplicationID != clientId)
@@ -102,8 +101,7 @@ namespace DiscordRpcApp
                 }
             });
 
-            LblStatus.Text = "Status: Rich Presence Active & Saved!";
-            LblStatus.Foreground = Brushes.Green;
+            UpdateStatusUI("Rich Presence Active", "#23A55A");
         }
 
         private void BtnStop_Click(object? sender, RoutedEventArgs e)
@@ -115,8 +113,13 @@ namespace DiscordRpcApp
                 client = null;
             }
 
-            LblStatus.Text = "Status: Disconnected";
-            LblStatus.Foreground = Brushes.Red;
+            UpdateStatusUI("Disconnected", "#F23F43");
+        }
+
+        private void UpdateStatusUI(string message, string hexColor)
+        {
+            LblStatus.Text = message;
+            DotStatus.Fill = Brush.Parse(hexColor);
         }
     }
 }
